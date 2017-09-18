@@ -1,0 +1,53 @@
+Given a List of words, return the words that can be typed using letters of alphabet on only one row's of American keyboard like the 
+image below.
+
+Note:
+You may use one character in the keyboard more than once.
+You may assume the input string will only contain letters of alphabet.
+
+Input: ["Hello", "Alaska", "Dad", "Peace"]
+Output: ["Alaska", "Dad"]
+
+题意：输入一组string，输出仅用一行键盘就能输出的string
+
+思路：构建map<int, string> m，记录每一行键盘的字符；遍历string的每个字符，若row与tmprow不相等，不符合要求；否则，存入ans
+
+
+class Solution {
+public:
+    vector<string> findWords(vector<string>& words) {
+      int row, tmprow;
+	    map<int, string> m;
+      vector<string> ans;
+	    string str1 = "QWERTYUIOPqwertyuiop", str2 ="ASDFGHJKLasdfghjkl", str3 ="ZXCVBNMzxcvbnm", str;
+	    m[1] = str1;
+	    m[2] = str2;
+	    m[3] = str3;
+        
+        for(int i=0;i<words.size();i++)
+        {
+            bool flag = true;
+            int row, tmprow;
+            for(int j=0;j<words[i].size();j++)
+            {
+                for (auto it = m.begin(); it != m.end(); it++)
+		            {
+			              if (it->second.find(words[i][j]) != string::npos)
+			              {
+				                tmprow = it->first;
+				                break;
+			              }
+		            }
+		            if (j == 0)
+			              row = tmprow;
+		            else if (row != tmprow)
+		            {
+		                flag = false;
+                    break;
+		            }
+            }
+        if(flag) ans.push_back(words[i]);
+        }
+        return ans;
+    }
+};

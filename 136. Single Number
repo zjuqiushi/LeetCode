@@ -1,0 +1,27 @@
+Given an array of integers, every element appears twice except for one. Find that single one.
+
+Note:
+Your algorithm should have a linear runtime complexity. Could you implement it without using extra memory?
+
+题意：找出数组中只出现一次的元素，要求算法时间复杂度是线性的，空间复杂度为O(1)，只允许开常数个空间
+
+思路：若for循环遍历，算法时间复杂度为O(n2), 会超时；O(n)复杂度只允许扫描一遍，采用异或运算进行判断
+a ^ b = b ^ a
+a ^ a = 0
+0 ^ a = a
+因此，对每个元素异或一遍之后，结果就是只出现一次的元素
+
+class Solution {
+public:
+    int singleNumber(vector<int>& nums) {
+        if(nums.size() == 0)
+            return 0;
+        
+        int res = nums[0];
+        
+        for(int i=1;i<nums.size();i++)
+            res = res ^ nums[i];
+        
+        return res;
+    }
+};

@@ -1,0 +1,57 @@
+Given a string, find the length of the longest substring without repeating characters.
+
+Examples:
+
+Given "abcabcbb", the answer is "abc", which the length is 3.
+
+Given "bbbbb", the answer is "b", with the length of 1.
+
+Given "pwwkew", the answer is "wke", with the length of 3. Note that the answer must be a substring, "pwke" is a subsequence and not a 
+substring.
+
+Me:
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        if(s.size() <= 1) return s.size();
+        int ans = 0;
+        for(int i=0;i<s.size();i++)
+        {
+            string str; 
+            str += s[i];
+            for(int j = i + 1;j<s.size();j++)
+            {
+                if(str.find(s[j]) == string::npos)
+                    str+=s[j];
+                else
+                {
+                    if(str.size() > ans)
+                        ans = str.size();
+                    break;
+                }
+            }
+            if(str.size() > ans)
+                ans = str.size();
+        }
+        return ans;
+    }
+};
+
+Discuss:
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        int place[255];
+        fill(place, place + 255, -1);
+        int start = 0;
+        int result = 0;
+        for(int i = 0; i < s.size(); i++){
+            if(place[s[i]] >= start){
+                result = max(result, i - start);
+                start = place[s[i]] + 1;
+            }
+            place[s[i]] = i;
+        }
+        return max(result, int(s.size()) - start);
+    }
+};

@@ -1,0 +1,76 @@
+Given a string, find the length of the longest substring without repeating characters.
+
+Examples:
+
+Given "abcabcbb", the answer is "abc", which the length is 3.
+
+Given "bbbbb", the answer is "b", with the length of 1.
+
+Given "pwwkew", the answer is "wke", with the length of 3. Note that the answer must be a substring, "pwke" is a subsequence and not 
+a substring.
+
+题意：输出字符串最大不重复子串的长度
+
+思路: 1. 一开始做采用常规遍历，复杂度是O(n2)；字符的ASCII码取值为[0,256]，可用hash表存储元素下标；
+      2. 初始时，hash表全置为-1, start置0，若hash[s[i]] == -1，表明该字符之前没出现过，令hash[s[i]] = i; 若hash[s[i]] >= start，表明该字符
+      出现第二次，计算其到start的长度是否大于res；
+      3.输出max(res, s.size() - start)，考虑到结尾时仍未出现重复字符的情况
+      
+Me：
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        if(s.size() <= 1) return s.size();
+        int ans = 0;
+        for(int i=0;i<s.size();i++)
+        {
+            string str; 
+            str += s[i];
+            for(int j = i + 1;j<s.size();j++)
+            {
+                if(str.find(s[j]) == string::npos)
+                    str+=s[j];
+                else
+                {
+                    if(str.size() > ans)
+                        ans = str.size();
+                    break;
+                }
+            }
+            if(str.size() > ans)
+                ans = str.size();
+        }
+        return ans;
+    }
+};
+
+Discuss：
+int lengthOfLongestSubstring(string s) {
+        vector<int> dict(256, -1);
+        int maxLen = 0, start = -1;
+        for (int i = 0; i != s.length(); i++) {
+            if (dict[s[i]] > start)
+                start = dict[s[i]];
+            dict[s[i]] = i;
+            maxLen = max(maxLen, i - start);
+        }
+        return maxLen;
+    }
+    
+    
+class Solution {
+public:
+    int lengthOfLongestSubstring(std::string s) {
+        std::vector<int> flag(256, -1);
+        int start = 0, longest = 0, len = s.size();
+        for (int i = 0; i != len; ++i) {
+            if (flag[s[i]] >= start) {
+                longest = std::max(longest, i - start);
+                start = flag[s[i]] + 1;
+            }
+            flag[s[i]] = i;
+        }
+        return std::max(longest, len - start);
+    }
+};
+               

@@ -1,0 +1,46 @@
+Given two strings representing two complex numbers.
+
+You need to return a string representing their multiplication. Note i2 = -1 according to the definition.
+
+Note:
+1. The input strings will not have extra blank.
+2. The input strings will be given in the form of a+bi, where the integer a and b will both belong to the range of [-100, 100]. 
+   And the output should be also in this form.
+   
+Me:
+class Solution {
+public:
+    string complexNumberMultiply(string a, string b) {
+        int psign1 = a.find('+');
+        int a1 = stoi(a.substr(0, psign1));
+        int b1 = stoi(a.substr(psign1 + 1, a.size() - psign1 - 1));
+        int psign2 = b.find('+');
+        int a2 = stoi(b.substr(0, psign2));
+        int b2 = stoi(b.substr(psign2 + 1, b.size() - psign2 - 1));
+        int ansa = a1*a2 - b1*b2;
+        int ansb = a1*b2 + a2*b1;
+        stringstream ss;
+        string tmp1, tmp2, ans;
+        ss<<ansa;
+        ss>>tmp1;
+        ss.clear();
+        ss<<ansb;
+        ss>>tmp2;
+        ans = tmp1 + '+' + tmp2 + 'i';
+        return ans;
+    }
+};
+
+Discuss:
+class Solution {
+public:
+    string complexNumberMultiply(string a, string b) {
+        int ra, ia, rb, ib;
+        char sign, i;
+        stringstream first(a), second(b), ans;
+        first >> ra >> sign >> ia >> i;
+        second >> rb >> sign >> ib >> i;
+        ans << ra*rb - ia*ib << "+" << ra*ib + rb*ia << "i";
+        return ans.str();
+    }
+};

@@ -1,0 +1,73 @@
+Given a binary search tree and the lowest and highest boundaries as L and R, trim the tree so that all its elements lies in [L, R] (R >= L).
+You might need to change the root of the tree, so the result should return the new root of the trimmed binary search tree.
+
+Me:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    vector<int> node;
+    void trimleaf(TreeNode* root, int L, int R)
+    {
+        if(root == NULL) return;
+        if(root->val >= L && root->val <= R)
+            node.push_back(root->val);
+        if(root->left != NULL) trimleaf(root->left, L, R);
+        if(root->right != NULL) trimleaf(root->right, L, R);
+    }
+    
+    TreeNode* build(TreeNode* root, int v)
+    {
+        if(root == NULL)
+        {
+            root = new TreeNode(v);
+            root->left = root->right = NULL;
+        }
+        else if(v < root->val)
+            root->left = build(root->left, v);
+        else
+            root->right = build(root->right, v);
+        return root;
+    }
+    
+    TreeNode* trimBST(TreeNode* root, int L, int R) {
+        trimleaf(root, L ,R);
+        TreeNode* ans = NULL;
+        for(int i = 0;i<node.size();i++)
+            ans = build(ans, node[i]);
+        return ans;
+    }
+};
+
+Discuss:
+class Solution {
+public:
+    TreeNode* trimBST(TreeNode* root, int L, int R) {
+        if (root == NULL) return NULL;
+        if (root->val < L) return trimBST(root->right, L, R);
+        if (root->val > R) return trimBST(root->left, L, R);
+        root->left = trimBST(root->left, L, R);
+        root->right = trimBST(root->right, L, R);
+        return root;
+    }
+};
+
+TreeNode* trimBST(TreeNode* root, int L, int R, bool top=true) {
+    if (!root)
+        return root;
+    root->left = trimBST(root->left, L, R, false);
+    root->right = trimBST(root->right, L, R, false);
+    if (root->val >= L && root->val <= R)
+        return root;
+    auto result = root->val < L ? root->right : root->left;
+    if (!top)
+        delete root;
+    return result;
+}

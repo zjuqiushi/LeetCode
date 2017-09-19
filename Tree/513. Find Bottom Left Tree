@@ -1,0 +1,65 @@
+Given a binary tree, find the leftmost value in the last row of the tree.
+
+Me:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    int res, depth = -1, index = -1;
+    void dfs(TreeNode* root, int tmpdepth, int tmpindex)
+    {
+        if(tmpdepth > depth)
+        {
+            res = root->val;
+            depth = tmpdepth;
+            index = tmpindex;
+        }
+        else if(tmpdepth == depth && tmpindex < index)
+        {
+            res = root->val;
+            index = tmpindex;
+        }
+        if(root->left != NULL) dfs(root->left, tmpdepth + 1, 2*tmpindex + 1);
+        if(root->right != NULL) dfs(root->right, tmpdepth + 1, 2*tmpindex + 2);
+    }
+    
+    int findBottomLeftValue(TreeNode* root) {
+        dfs(root, 0, 0);
+        return res;
+    }
+};
+
+Discuss:
+class Solution {
+public:
+    void findBottomLeftValue(TreeNode* root, int& maxDepth, int& leftVal, int depth) {
+        if (root == NULL) {
+            return;
+        }
+        //Go to the left and right of each node 
+        findBottomLeftValue(root->left, maxDepth, leftVal, depth+1);
+        findBottomLeftValue(root->right, maxDepth, leftVal, depth+1);
+        
+        //Update leftVal and maxDepth
+        if (depth > maxDepth) {
+            maxDepth = depth;
+            leftVal = root->val;
+        }
+    }
+    
+    //Entry function
+    int findBottomLeftValue(TreeNode* root) {
+        int maxDepth = 0;
+        //Initialize leftVal with root's value to cover the edge case with single node
+        int leftVal = root->val;
+        findBottomLeftValue(root, maxDepth, leftVal, 0);
+        return leftVal;
+    }
+};

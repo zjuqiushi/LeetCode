@@ -1,0 +1,40 @@
+Initially, there is a Robot at position (0, 0). Given a sequence of its moves, judge if this robot makes a circle, which means it moves back
+to the original place.
+
+The move sequence is represented by a string. And each move is represent by a character. The valid robot moves are R (Right), L (Left), 
+U (Up) and D (down). The output should be true or false representing whether the robot makes a circle.
+
+Me:
+class Solution {
+public:
+    bool judgeCircle(string moves) {
+        if(moves.size() % 2 != 0)
+            return false;
+        map<char, int> m;
+        m['R'] = 0, m['L'] = 0, m['U'] = 0, m['D'] = 0;
+        for(int i = 0; i < moves.size(); i++)
+            m[moves[i]] ++;
+        if(m['R'] == m['L'] && m['U'] == m['D'])
+            return true;
+        else
+            return false;
+    }
+};
+
+Discuss:
+class Solution {
+public:
+    bool judgeCircle(string moves) {
+        int v = 0;
+        int h = 0;
+        for (char ch : moves) {
+            switch (ch) {
+                case 'U' : v++; break;
+                case 'D' : v--; break;
+                case 'R' : h++; break;
+                case 'L' : h--; break;
+            }
+        }
+        return v == 0 && h == 0;
+    }
+};

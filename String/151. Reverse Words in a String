@@ -1,0 +1,70 @@
+Given an input string, reverse the string word by word.
+
+For example,
+Given s = "the sky is blue",
+return "blue is sky the"
+
+注意:istringstream用法，头文件是#include <sstream>
+
+Discuss:
+
+class Solution {
+public:
+    void reverse(string &s, int b, int e) {
+        while (b <= e) {
+            swap(s[b++], s[e--]);
+        }
+    }
+    void reverseWords(string &s) {
+        while (*s.begin() == ' ') {
+            s.erase(s.begin());
+        }
+        while (s[s.size()-1] == ' ') {
+            s.pop_back();
+        }
+        for (int i=0; i<s.size(); i++) {
+            if (s[i]  == ' ' && s[i+1] == ' ') {
+                s.erase(s.begin()+i);
+                i--;
+            }
+        }
+        reverse(s, 0, s.size()-1);
+        int start = 0;
+        for (int i=0; i<s.size(); i++) {
+            if (s[i] == ' ') {
+                reverse(s, start, i-1);
+                start = i+1;
+            }
+        }
+        reverse(s, start, s.size()-1);
+    }
+};
+
+class Solution {
+public:
+    void reverseWords(string &s) {
+        reverse(s.begin(), s.end());
+        int storeIndex = 0;
+        for (int i = 0; i < s.size(); i++) {
+            if (s[i] != ' ') {
+                if (storeIndex != 0) s[storeIndex++] = ' ';
+                int j = i;
+                while (j < s.size() && s[j] != ' ') { s[storeIndex++] = s[j++]; }
+                reverse(s.begin() + storeIndex - (j - i), s.begin() + storeIndex);
+                i = j;
+            }
+        }
+        s.erase(s.begin() + storeIndex, s.end());
+    }
+};
+
+class Solution {
+public:
+    void reverseWords(string &s) {
+        istringstream is(s);
+        string tmp;
+        is >> s;
+        while(is >> tmp) s = tmp + " " + s;
+        if(s[0] == ' ') s = "";
+    }
+};

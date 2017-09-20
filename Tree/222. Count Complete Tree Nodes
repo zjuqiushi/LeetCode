@@ -1,0 +1,94 @@
+Given a complete binary tree, count the number of nodes.
+
+Definition of a complete binary tree from Wikipedia:
+In a complete binary tree every level, except possibly the last, is completely filled, and all nodes in the last level are as far left as 
+possible. It can have between 1 and 2h nodes inclusive at the last level h.
+
+Me:
+一开始这样做超时，12/18
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    int countNodes(TreeNode* root) {
+        int res = 0;
+        queue<TreeNode*> q;
+        q.push(root);
+        while(!q.empty())
+        {
+            TreeNode* node = q.front();
+            if(node == NULL)
+                return res;
+            else
+                res++;
+            q.pop();
+            q.push(node->left);
+            q.push(node->right);
+        }
+    }
+};
+
+换了种思路，先求出完全二叉树的深度，再进行一次dfs，将最后一层和前面所有层数的节点数相加输出 16/18
+class Solution {
+public:
+    int res = 0, h = 0;
+    void FindDepth(TreeNode* root, int depth)
+    {
+        if(root == NULL) 
+            h = depth - 1;
+        else
+            FindDepth(root->left, depth + 1);
+        return;
+    }
+    
+    void dfs(TreeNode* root, int depth)
+    {
+        if(depth < h - 1)
+        {
+            dfs(root->left, depth + 1);
+            dfs(root->right, depth + 1);
+        }
+        else if(depth == h - 1)
+        {
+            if(root->left != NULL && root->right != NULL)
+                res+=2;
+            else if(root->left != NULL)
+                res++;
+            else
+                return;
+        }
+        else
+            return;
+    }
+    
+    int countNodes(TreeNode* root) {
+        if(root == NULL) return 0;
+        FindDepth(root, 0);
+        if(h == 0) return 1;
+        res = pow(2, h) - 1;
+        dfs(root, 0);
+        return res;
+    }
+};
+
+Discuss:
+class Solution {
+public:
+    int countNodes(TreeNode* root) {
+        if(root == NULL) return 0;
+        int hl = 0, hr = 0;
+        TreeNode* l = root;
+        TreeNode* r = root;
+        while(l) {hl++; l = l->left;};
+        while(r) {hr++; r = r->right;};
+        if(hl == hr) return pow(2, hl) - 1;
+        return 1 + countNodes(root->left) + countNodes(root->right);
+    }
+};

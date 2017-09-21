@@ -1,0 +1,66 @@
+public:
+    vector<TreeNode*> pathp, pathq, tmppathp, tmppathq;
+    void Findp(TreeNode* root, TreeNode* p)
+    {
+        if(root == NULL)
+            return;
+        else if(root == p)
+        {
+            tmppathp.push_back(p);
+            pathp = tmppathp;
+            return;
+        }
+        tmppathp.push_back(root);
+        if(root->left != NULL)
+            Findp(root->left, p);
+        tmppathp.pop_back();
+        if(root->right != NULL)
+            Findp(root->right, p);
+        tmppathp.pop_back();
+    }
+    void Findq(TreeNode* root, TreeNode* q)
+    {
+        if(root == NULL)
+            return;
+        else if(root == q)
+        {
+            tmppathq.push_back(q);
+            pathq = tmppathq;
+            return;
+        }
+        tmppathq.push_back(root);
+        if(root->left != NULL)
+            Findq(root->left, q);
+        tmppathq.pop_back();
+        if(root->right != NULL)
+            Findq(root->right, q);
+        tmppathq.pop_back();
+    }
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        if(p == NULL && q == NULL)
+            return NULL;
+        else if(p == NULL && q != NULL)
+            return q;
+        else if(q == NULL && p != NULL)
+            return p;
+        
+        Findp(root, p);
+        Findq(root, q);
+        TreeNode* ans = NULL;
+        int len = min(pathp.size(), pathq.size());
+        for(int i=0;i<len;i++)
+        {
+            if(i != len -1)
+            {
+                if(pathp[i] == pathq[i] && pathp[i+1] != pathq[i+1])
+                {
+                    ans = pathp[i];
+                    break;
+                }
+            }
+            else if(i == len -1 && pathp[i] == pathq[i])
+                ans = pathp[i];
+        }
+        return ans;
+    }
+};

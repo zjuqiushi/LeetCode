@@ -9,6 +9,9 @@ Note:
 n is a positive integer, which is in the range of [1, 10000].
 All the integers in the array will be in the range of [-10000, 10000].
 
+题意：长度为2n的数组，求n个min pair的最小值
+
+思路：对数组排序，从i=0开始，隔两个开始相加
 
 Me:
 class Solution {

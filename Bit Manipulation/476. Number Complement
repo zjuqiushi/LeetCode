@@ -1,0 +1,75 @@
+Given a positive integer, output its complement number. The complement strategy is to flip the bits of its binary representation.
+
+Note:
+The given integer is guaranteed to fit within the range of a 32-bit signed integer.
+You could assume no leading zero bit in the integer’s binary representation.
+Example 1:
+Input: 5
+Output: 2
+Explanation: The binary representation of 5 is 101 (no leading zero bits), and its complement is 010. So you need to output 2.
+Example 2:
+Input: 1
+Output: 0
+Explanation: The binary representation of 1 is 1 (no leading zero bits), and its complement is 0. So you need to output 0.
+
+题意：将一个二进制数翻转输出
+
+思路：如果我们能知道该数最高位的1所在的位置，就可以构造一个长度和该数据所占位置一样长的一个掩码mask，然后概述和mask进行异或即可
+
+Me:
+class Solution {
+public:
+    int findComplement(int num) {
+       int exp = log(num) / log(2);
+       int t = pow(2, exp + 1) -1;
+       return num ^ t; 
+    }
+};
+
+public:
+    int findComplement(int num) {
+        int mask = 1, tmp = num;
+        while(tmp > 0)
+        {
+            mask = mask << 1;
+            tmp = tmp >> 1;
+        }
+        return num ^ (mask-1);
+    }
+};
+
+
+Discuss:
+class Solution {
+public:
+    int findComplement(int num) {
+        /*
+        int i= 0;
+        int result = 0;
+        while (num) {
+            result += num & 1 ? 0 : pow(2, i);
+            num = num >> 1;
+            ++i;
+        }
+        return result;
+        */
+        int mask = num;
+        mask |= mask>>1;
+        mask |= mask>>2;
+        mask |= mask>>4;
+        mask |= mask>>8;
+        mask |= mask>>16;
+        return mask ^ num;
+    }
+};
+
+class Solution {
+public:
+    int findComplement(int num) {
+        int complement;
+        unsigned mask = ~0;
+        while (num & mask) mask <<= 1;
+        complement = ~mask & ~num;
+        return complement;
+    }
+};

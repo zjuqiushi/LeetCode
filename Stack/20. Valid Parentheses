@@ -1,0 +1,65 @@
+Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
+
+The brackets must close in the correct order, "()" and "()[]{}" are all valid but "(]" and "([)]" are not.
+
+题意：括号匹配
+
+思路：遍历string, 若s[i]为'(', '{', '['存入stack，若s[i]为')', '}', ']', 判断栈顶元素是否为相应的匹配，以及栈是否为空，若不满足，返回false;
+     遍历结束后，判断栈是否为空，若不为空，表示存在没有配对的Parentheses, 返回false
+     
+Me:
+class Solution {
+public:
+    bool isValid(string s) {
+        stack<char> t;
+        for(int i=0; i<s.size(); i++)
+        {
+            if(s[i] == '(' || s[i] == '{' || s[i] == '[')
+                t.push(s[i]);
+            else if(s[i] == ')')
+            {
+                if(t.empty() || t.top() != '(')
+                    return false;
+                else
+                    t.pop();
+            }
+            else if(s[i] == '}')
+            {
+                if(t.empty() || t.top() != '{')
+                    return false;
+                else
+                    t.pop();
+            }
+            else if(s[i] == ']')
+            {
+                if(t.empty() || t.top() != '[')
+                    return false;
+                else
+                    t.pop();
+            }
+            else
+                return false;
+        }
+       return t.empty();
+    }
+};
+
+Discuss：
+class Solution {
+public:
+    bool isValid(string s) {
+        stack<char> paren;
+        for (char& c : s) {
+            switch (c) {
+                case '(': 
+                case '{': 
+                case '[': paren.push(c); break;
+                case ')': if (paren.empty() || paren.top()!='(') return false; else paren.pop(); break;
+                case '}': if (paren.empty() || paren.top()!='{') return false; else paren.pop(); break;
+                case ']': if (paren.empty() || paren.top()!='[') return false; else paren.pop(); break;
+                default: ; // pass
+            }
+        }
+        return paren.empty() ;
+    }
+};

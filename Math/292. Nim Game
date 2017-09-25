@@ -1,0 +1,20 @@
+You are playing the following Nim Game with your friend: There is a heap of stones on the table, each time one of you take turns to remove 1 to 3 stones. The one who removes the last stone will be the winner. You will take the first turn to remove the stones.
+
+Both of you are very clever and have optimal strategies for the game. Write a function to determine whether you can win the game given the number of stones in the heap.
+
+For example, if there are 4 stones in the heap, then you will never win the game: no matter 1, 2, or 3 stones you remove, the last stone will always be removed by your friend.
+
+Credits:
+Special thanks to @jianchao.li.fighter for adding this problem and creating all test cases.
+
+
+题意：和一个朋友玩游戏取石头的游戏，每次能取走1-3块（你先开始拿），给定石头个数n，确定你是否能赢下游戏
+
+思路：根据题意，若剩下4块石头，则必输，否则赢，则根据剩余石头是否是4的倍数来确定输赢
+
+class Solution {
+public:
+    bool canWinNim(int n) {
+        return (n % 4 !=0);
+    }
+};

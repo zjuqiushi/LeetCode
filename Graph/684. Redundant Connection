@@ -1,0 +1,79 @@
+In this problem, a tree is an undirected graph that is connected and has no cycles.
+
+The given input is a graph that started as a tree with N nodes (with distinct values 1, 2, ..., N), with one additional edge added. The added edge has two different vertices chosen from 1 to N, and was not an edge that already existed.
+
+The resulting graph is given as a 2D-array of edges. Each element of edges is a pair [u, v] with u < v, that represents an undirected edge connecting nodes u and v.
+
+Return an edge that can be removed so that the resulting graph is a tree of N nodes. If there are multiple answers, return the answer that occurs last in the given 2D-array. The answer edge [u, v] should be in the same format, with u < v.
+
+Example 1:
+Input: [[1,2], [1,3], [2,3]]
+Output: [2,3]
+Explanation: The given undirected graph will be like this:
+  1
+ / \
+2 - 3
+Example 2:
+Input: [[1,2], [2,3], [3,4], [1,4], [1,5]]
+Output: [1,4]
+Explanation: The given undirected graph will be like this:
+5 - 1 - 2
+    |   |
+    4 - 3
+Note:
+The size of the input 2D-array will be between 3 and 1000.
+Every integer represented in the 2D-array will be between 1 and N, where N is the size of the input array.
+
+class Solution {
+    int find(int num, unordered_map<int, int>& dict){
+        while (dict[num] != num){
+            dict[num] = dict[dict[num]];
+            num = dict[num];
+        }
+        return num;
+    }
+public:
+    vector<int> findRedundantConnection(vector<vector<int>>& edges) {
+        
+        unordered_map<int, int> dict;
+        
+        for (auto& ele: edges){
+            int num1 = ele[0];
+            int num2 = ele[1];
+            if (!dict.count(num1)) dict[num1] = num1;
+            if (!dict.count(num2)) dict[num2] = num2;
+            int res1 = find(num1, dict);
+            int res2 = find(num2, dict);
+            if (res1 != res2){
+                dict[res1] = res2;
+            }else{
+                return ele;
+            }
+        }
+        return {};
+    }
+};
+
+class Solution {
+    static bool dfs(vector<int> &visited, vector<vector<int>> &tree, int node, int from) {
+        if (visited[node]) return false;
+        visited[node] = 1;
+        for (int to: tree[node]) {
+            if (to != from && !dfs(visited, tree, to, node)) return false;
+        }
+        return true;
+    }
+public:
+    vector<int> findRedundantConnection(vector<vector<int>>& edges) {
+        vector<vector<int>> nodes(2001);
+        vector<int> visited(2001);
+        for (auto &e: edges) {
+            if (find(nodes[e[0]].begin(), nodes[e[0]].end(), e[1]) != nodes[e[0]].end()) return e;
+            nodes[e[0]].push_back(e[1]);
+            nodes[e[1]].push_back(e[0]);
+            if (!dfs(visited, nodes, e[0], 0)) return e;
+            fill(visited.begin(), visited.end(), 0);
+        }
+        return vector<int>();
+    }
+};

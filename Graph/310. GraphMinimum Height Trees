@@ -1,0 +1,82 @@
+
+
+Me:一开始的思路是对每个节点，进行DFS遍历，找出最短深度；存的时候将边的两个节点都存入相应的子节点中，所以DFS结束的条件是该节点的所有相邻节点都已visit过
+有两个测试用例超时
+
+class Solution {
+public:
+    void dfs(int root, vector<bool> &visit, vector<vector<int>> &v, int tmpdepth, int &depth){
+        bool flag = false;
+        visit[root] = true;
+        for(int i=0;i<v[root].size();i++){
+            if(!visit[v[root][i]])
+            {
+                dfs(v[root][i], visit, v, tmpdepth + 1, depth);
+                flag = true;
+            }
+        }
+        if(!flag && tmpdepth > depth)
+            depth = tmpdepth;
+    }
+        
+    vector<int> findMinHeightTrees(int n, vector<pair<int, int>>& edges) {
+        int mindepth = INT_MAX;
+        vector<vector<int>> v(n);
+        vector<int> ans;
+        for(auto e:edges){
+            v[e.first].push_back(e.second);
+            v[e.second].push_back(e.first);
+        }
+        for(int i=0;i<n;i++){
+            int tmp = 0;
+            vector<bool> visit(n, false);
+            dfs(i, visit, v, 0, tmp);
+            if(tmp < mindepth){
+                mindepth = tmp;
+                ans.clear();
+                ans.push_back(i);
+            }
+            else if(tmp == mindepth)
+                ans.push_back(i);
+        }
+        return ans;
+    }
+}
+
+Discuss:
+BFS算法
+class Solution {
+ public:
+  vector<int> findMinHeightTrees(int n, vector<pair<int, int>>& edges) {
+    // Initialize the undirected graph
+    vector<unordered_set<int>> adj(n);
+    for (pair<int, int> p : edges) {
+      adj[p.first].insert(p.second);
+      adj[p.second].insert(p.first);
+    }
+    // Corner case
+    vector<int> current;
+    if (n == 1) {
+      current.push_back(0);
+      return current;
+    }
+    // Create first leaf layer
+    for (int i = 0; i < adj.size(); ++i) {
+      if (adj[i].size() == 1) {
+        current.push_back(i);
+      }
+    }
+    // BFS the graph
+    while (true) {
+      vector<int> next;
+      for (int node : current) {
+        for (int neighbor : adj[node]) {
+          adj[neighbor].erase(node);
+          if (adj[neighbor].size() == 1) next.push_back(neighbor);
+        }
+      }
+      if (next.empty()) return current;
+      current = next;
+    }
+  }
+};

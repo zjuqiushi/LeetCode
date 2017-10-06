@@ -63,6 +63,6 @@ private:
             return false;
         }
         
-        return isValidBST(node->left, minLimit, min((long) node->val, maxLimit)) && isValidBST(node->right, max(minLimit, (long) node->val), maxLimit);
+        return isValidBST(node->left, minLimit, (long) node->val) && isValidBST(node->right, (long) node->val, maxLimit);
     }
 };

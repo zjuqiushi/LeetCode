@@ -1,0 +1,75 @@
+Given a list of airline tickets represented by pairs of departure and arrival airports [from, to], reconstruct the itinerary in order. All of the tickets belong to a man who departs from JFK. Thus, the itinerary must begin with JFK.
+
+Note:
+If there are multiple valid itineraries, you should return the itinerary that has the smallest lexical order when read as a single string. For example, the itinerary ["JFK", "LGA"] has a smaller lexical order than ["JFK", "LGB"].
+All airports are represented by three capital letters (IATA code).
+You may assume all tickets form at least one valid itinerary.
+Example 1:
+tickets = [["MUC", "LHR"], ["JFK", "MUC"], ["SFO", "SJC"], ["LHR", "SFO"]]
+Return ["JFK", "MUC", "LHR", "SFO", "SJC"].
+Example 2:
+tickets = [["JFK","SFO"],["JFK","ATL"],["SFO","ATL"],["ATL","JFK"],["ATL","SFO"]]
+Return ["JFK","ATL","JFK","SFO","ATL","SFO"].
+Another possible reconstruction is ["JFK","SFO","ATL","JFK","ATL","SFO"]. But it is larger in lexical order.
+
+题意：有向图的一笔画问题，即从一个确定节点开始，通过所有边一次且仅一次
+
+注意：所给测例不会有无解的情况（可知图必然是连通的，且除了起点和终点以外，所有节点的入边和出边数目相等）；如果有多个解，需要给出按字母顺序最小的那个解
+
+思路：题目中要求路线按字典排序，unordered_map<string, multiset<string>>存储图结构；以给定起点开始DFS并删除边，直到当前顶点无出边为止，得到一条路径，但这条路径
+不能覆盖所有的顶点；不过可证明的是，图中剩下的边所组成的子图里，从任意一个顶点开始，再按照上面的过程走一遍，一定能够回到这个起点。
+     出度和入度之和为奇：这种点最多只有两个，就是起点和终点；
+     出度和入度之和为偶：就是正常的中间过渡点；
+     如果所有点的出度和入度之和都为偶，那么一直dfs到底就是要求的解；
+     在dfs过程中，如果我们stuck了，其实就是因为我们访问到了终点
+     dfs的时候，如果卡住了，那么说明访问到了终点，就把这个点放进vector中。如果没卡住的话，就把点push进stack中（用于回溯），并且一直访问下去
+     
+class Solution {
+public:
+    vector<string> findItinerary(vector<pair<string, string>> tickets) {
+        unordered_map<string, multiset<string>>m;
+        vector<string> ans;
+        stack<string> s;
+        
+        if(tickets.size() <= 0) return ans;
+        for(auto p:tickets)
+            m[p.first].insert(p.second);
+        
+        s.push("JFK");
+        while(!s.empty()){
+            string t = s.top();
+            if(m[t].size() == 0){
+                ans.push_back(t);
+                s.pop();
+            }
+            else{
+                s.push(*(m[t].begin()));
+                m[t].erase(m[t].begin());
+            }
+        }
+        reverse(ans.begin(), ans.end());
+        return ans;
+    }
+};
+
+Discuss:
+class Solution {
+    void visit(unordered_map<string, multiset<string>>&mp, vector<string>&route, string start){
+        while(!mp[start].empty()){
+            auto it = mp[start].begin();
+            string next = *it;
+            mp[start].erase(it);
+            visit(mp, route, next);
+        }
+        route.push_back(start);
+    }
+public:
+    vector<string> findItinerary(vector<pair<string, string>> tickets) {
+        unordered_map<string, multiset<string>> mp;
+        for(auto p: tickets) mp[p.first].insert(p.second);
+        vector<string> route;
+        visit(mp, route, "JFK");
+        reverse(route.begin(), route.end());
+        return route;
+    }
+};

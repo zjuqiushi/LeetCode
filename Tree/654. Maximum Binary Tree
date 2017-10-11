@@ -1,0 +1,107 @@
+Given an integer array with no duplicates. A maximum tree building on this array is defined as follow:
+
+The root is the maximum number in the array.
+The left subtree is the maximum tree constructed from left part subarray divided by the maximum number.
+The right subtree is the maximum tree constructed from right part subarray divided by the maximum number.
+Construct the maximum tree by the given array and output the root node of this tree.
+
+Example 1:
+Input: [3,2,1,6,0,5]
+Output: return the tree root node representing the following tree:
+
+      6
+    /   \
+   3     5
+    \    / 
+     2  0   
+       \
+        1
+Note:
+The size of the given array will be in the range [1,1000].
+
+题意：给定一个数组，数组最大值作为树的根节点，左子树根节点是数组最大值左侧的最大值，右子树根节点是数组最大值右侧的最大值，依次进行构造
+
+思路：确定左右子树的下标，进行递归构造
+
+Me:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode* build(int start, int end, TreeNode* root, vector<int>& nums){
+        if(start > end)
+            return NULL;
+        int maxval = INT_MIN, index;
+        for(int i=start;i<=end;i++){
+            if(nums[i] > maxval){
+                maxval = nums[i];
+                index = i;
+            }
+        }
+        if(root == NULL){
+            root = new TreeNode(maxval);
+        }
+        root->left = build(start, index-1, root->left, nums);
+        root->right = build(index+1, end, root->right, nums);
+        return root;
+    }
+        
+    TreeNode* constructMaximumBinaryTree(vector<int>& nums) {
+        if(nums.size() <=0 )
+            return NULL;
+        TreeNode* ans = NULL;
+        ans = build(0, nums.size()-1, ans, nums);
+        return ans;
+    }
+};
+
+Discuss:
+public TreeNode constructMaximumBinaryTree(int[] nums) {  
+    return construt(nums, 0, nums.length-1);  
+}  
+  
+public TreeNode construt(int[] nums,int left,int right){  
+    if(left>right){  
+        return null;  
+    }  
+    int max=nums[left];  
+    int max_index=left;  
+    for(int i=left+1;i<=right;i++){  
+        if(nums[i]>max){  
+            max=nums[i];  
+            max_index=i;  
+        }  
+    }  
+    TreeNode root=new TreeNode(max);  
+    root.left=construt(nums, left, max_index-1);  
+    root.right=construt(nums, max_index+1, right);  
+    return root;  
+} 
+
+
+class Solution {
+public:
+    // O(N) solution
+    TreeNode* constructMaximumBinaryTree(vector<int>& nums) {
+        vector<TreeNode*> v;
+        for (int num : nums) {
+            TreeNode *cur = new TreeNode(num);
+            while (!v.empty() && v.back()->val < num) {
+                cur->left = v.back();
+                v.pop_back();
+            }
+            if (!v.empty()) {
+                v.back()->right = cur;
+            }
+            v.push_back(cur);
+        }
+        return v.front();
+    }
+};

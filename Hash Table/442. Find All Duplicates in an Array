@@ -1,0 +1,64 @@
+Given an array of integers, 1 ≤ a[i] ≤ n (n = size of array), some elements appear twice and others appear once.
+
+Find all the elements that appear twice in this array.
+
+Could you do it without extra space and in O(n) runtime?
+
+Example:
+Input:
+[4,3,2,7,8,2,3,1]
+
+Output:
+[2,3]
+
+题意：对具有1 ≤ a[i] ≤ n性质的数组，找出重复出现的元素
+
+思路：hashtable存储元素出现的个数
+
+Me:
+class Solution {
+public:
+    vector<int> findDuplicates(vector<int>& nums) {
+        vector<int> hash(nums.size() + 1 , 0);
+        vector<int> ans;
+        for(int i=0; i<nums.size(); i++){
+            hash[nums[i]]++;
+            if(hash[nums[i]] >= 2)
+                ans.push_back(nums[i]);
+        }
+        return ans;
+    }
+};
+
+Discuss:
+class Solution {
+public:
+    vector<int> findDuplicates(vector<int>& nums) {
+     int m=nums.size(),n;
+     vector<int> ans;
+     for(int i=0;i<m;)
+        if(nums[nums[i]-1]!=nums[i])
+            swap(nums[i],nums[nums[i]-1]);
+        else i++;
+     for(int i=0;i<m;i++)
+        if(nums[i]!=i+1) ans.push_back(nums[i]);
+     return ans;
+    }
+};
+
+利用数组输入的特点 1<=a(n)<=n,则可以直接利用原数组当hash表用。因为原数组都是正数，标为负数表示出现过，就可以找出所有出现过的数
+public class Solution {
+    // when find a number i, flip the number at position i-1 to negative. 
+    // if the number at position i-1 is already negative, i is the number that occurs twice.
+
+    public List<Integer> findDuplicates(int[] nums) {
+        List<Integer> res = new ArrayList<>();
+        for (int i = 0; i < nums.length; ++i) {
+            int index = Math.abs(nums[i])-1;
+            if (nums[index] < 0)
+                res.add(Math.abs(index+1));
+            nums[index] = -nums[index];
+        }
+        return res;
+    }
+}

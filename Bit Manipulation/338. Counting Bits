@@ -1,0 +1,43 @@
+Given a non negative integer number num. For every numbers i in the range 0 ≤ i ≤ num calculate the number of 1's in their binary representation and return them as an array.
+
+Example:
+For num = 5 you should return [0,1,1,2,1,2].
+
+Follow up:
+
+It is very easy to come up with a solution with run time O(n*sizeof(integer)). But can you do it in linear time O(n) /possibly in a single pass?
+Space complexity should be O(n).
+Can you do it like a boss? Do it without using any builtin function like __builtin_popcount in c++ or in any other language.
+Credits:
+Special thanks to @ syedee for adding this problem and creating all test cases.
+
+题意：给定非负整数num，返回[0,num]各个数字二进制形式1的个数
+
+思路：最初用按位与1并右移1的方法，超出内存；根据提示，可根据[0][1][2,3][4,7]的切分规律进行加1计算
+
+Me：
+class Solution {
+public:
+    vector<int> countBits(int num) {
+        vector<int> ans(1,0);
+        int cnt = 0;
+        while(cnt < num){
+            int size = ans.size();
+            for(int i=0;i<size&&cnt<num;++i,++cnt)
+                ans.push_back(ans[i]+1);
+        }
+        return ans;
+    }
+};
+
+Discuss:
+也可以从低位入手
+class Solution {  
+public:  
+    vector<int> countBits(int num) {  
+        vector<int> ret(num+1, 0);  
+        for(int i=1; i<=num; ++i)  
+            ret[i] = ret[i>>1] + i%2;  
+        return ret;  
+    }  
+};  

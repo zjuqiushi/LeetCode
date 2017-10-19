@@ -1,0 +1,81 @@
+Suppose you have a random list of people standing in a queue. Each person is described by a pair of integers (h, k), where h is the 
+height of the person and k is the number of people in front of this person who have a height greater than or equal to h. Write an 
+algorithm to reconstruct the queue.
+
+Note:
+The number of people is less than 1,100.
+
+Example
+
+Input:
+[[7,0], [4,4], [7,1], [5,0], [6,1], [5,2]]
+
+Output:
+[[5,0], [7,0], [5,2], [6,1], [4,4], [7,1]]
+
+题意：根据每人的身高和比他高的人数重新排列
+
+思路：根据身高从大到小排，根据高的人数从小到大排，再依次遍历vecotr,要注意高的人数为0的情况，因为排序后的身高是从大到小排的，所以要排在队首，其他情况
+是插入在当前元素的后面
+
+Me:
+class Solution {
+public:
+    static bool cmp(const pair<int, int> a, const pair<int, int> b){
+        if(a.first != b.first)
+            return a.first > b.first;
+        else if(a.second != b.second)
+            return a.second < b.second;
+        else
+            return false;
+    }
+    
+    vector<pair<int, int>> reconstructQueue(vector<pair<int, int>>& people) {
+        vector<pair<int, int>> ans;
+	    sort(people.begin(), people.end(), cmp);
+	    for (int i = 0; i<people.size(); i++){
+		    int cnt = 0;
+		    if (ans.size() == 0){
+			    ans.push_back(people[i]);
+			    continue;
+		    }
+		    for (auto it = ans.begin(); it != ans.end(); it++){
+		        if ((*it).first >= people[i].first){
+				    cnt++;
+			    }
+			    if (cnt >= people[i].second){
+				    if (it == ans.begin() && people[i].second == 0)
+					    ans.insert(it, people[i]);
+				    else
+					    ans.insert(it + 1, people[i]);
+				    break;
+			    }
+		    }
+	    }
+        return ans;
+    }
+};
+
+Discuss:
+因为之前已经按身高从大到小排了，所以在插入的时候，直接按偏移量插入即可
+
+class Solution {
+public:
+    static bool cmp(const pair<int, int> a, const pair<int, int> b){
+        if(a.first != b.first)
+            return a.first > b.first;
+        else if(a.second != b.second)
+            return a.second < b.second;
+        else
+            return false;
+    }
+    
+    vector<pair<int, int>> reconstructQueue(vector<pair<int, int>>& people) {
+        vector<pair<int, int>> ans;
+	    sort(people.begin(), people.end(), cmp);
+	    for (int i = 0; i<people.size(); i++){
+            ans.insert(ans.begin()+people[i].second, people[i]);
+	    }
+        return ans;
+    }
+};
